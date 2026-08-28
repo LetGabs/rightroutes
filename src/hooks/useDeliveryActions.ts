@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { logHistory, printRomaneios, updateDeliveries } from "@/lib/api";
+import { logHistory, updateDeliveries } from "@/lib/api";
 import { STATUS_LABEL, type Delivery, type DeliveryStatus, type Motoboy } from "@/lib/domain";
 
 export function useDeliveryActions() {
