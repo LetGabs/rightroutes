@@ -71,7 +71,10 @@ function Kanban() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Painel de logística</h1>
-          <p className="text-sm text-muted-foreground">Organize as entregas por etapa do fluxo operacional.</p>
+          <p className="text-sm text-muted-foreground">
+            Organize as entregas por etapa do fluxo operacional. A impressão do romaneio é feita no Fórmula Certa; aqui
+            você apenas confirma que já foi impresso.
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Input
