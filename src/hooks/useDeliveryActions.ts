@@ -78,9 +78,9 @@ export function useDeliveryActions() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const printAndRegister = useMutation({
-    mutationFn: async ({ deliveries, motoboys }: { deliveries: Delivery[]; motoboys: Motoboy[] }) => {
-      printRomaneios(deliveries, motoboys);
+  /** Marca romaneios como impressos no Fórmula Certa. Não gera documento nem muda o status. */
+  const confirmPrint = useMutation({
+    mutationFn: async ({ deliveries }: { deliveries: Delivery[] }) => {
       const now = new Date().toISOString();
       await updateDeliveries(
         deliveries.map((d) => d.id),
@@ -90,7 +90,7 @@ export function useDeliveryActions() {
         actor,
         deliveries.map((d) => ({
           delivery_id: d.id,
-          acao: "Romaneio impresso",
+          acao: "Impressão do romaneio confirmada (Fórmula Certa)",
           status_anterior: d.status,
           status_novo: d.status,
         })),
@@ -98,10 +98,10 @@ export function useDeliveryActions() {
     },
     onSuccess: (_d, vars) => {
       refresh();
-      toast.success(`${vars.deliveries.length} romaneio(s) enviados para impressão`);
+      toast.success(`${vars.deliveries.length} romaneio(s) marcados como impressos`);
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  return { moveStatus, assignMotoboy, printAndRegister };
+  return { moveStatus, assignMotoboy, confirmPrint };
 }
