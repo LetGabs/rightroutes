@@ -113,8 +113,8 @@ export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: P
                 </SelectContent>
               </Select>
 
-              <Button variant="outline" onClick={() => printAndRegister.mutate({ deliveries: [delivery], motoboys })}>
-                Imprimir romaneio
+              <Button variant="outline" onClick={() => confirmPrint.mutate({ deliveries: [delivery] })}>
+                Confirmar impressão
               </Button>
             </div>
 
