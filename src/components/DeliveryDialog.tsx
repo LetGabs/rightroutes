@@ -32,7 +32,7 @@ type Props = {
 
 export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: Props) {
   const { isLogistica } = useAuth();
-  const { moveStatus, assignMotoboy, printAndRegister } = useDeliveryActions();
+  const { moveStatus, assignMotoboy, confirmPrint } = useDeliveryActions();
   const [motivo, setMotivo] = useState(NAO_ENTREGA_MOTIVOS[0]!);
   const [obs, setObs] = useState("");
 
