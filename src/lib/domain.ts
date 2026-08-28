@@ -44,6 +44,18 @@ export const STATUS_CLASS: Record<DeliveryStatus, string> = {
   cancelado: "bg-muted text-muted-foreground border-border line-through",
 };
 
+// Cores de destaque das colunas do Kanban (borda superior + fundo do cabeçalho)
+export const STATUS_COLUMN_CLASS: Record<DeliveryStatus, string> = {
+  aguardando_logistica: "border-t-muted-foreground/50 bg-muted/60",
+  impressao_romaneios: "border-t-chart-3 bg-chart-3/10",
+  pronto_saida: "border-t-chart-5 bg-chart-5/10",
+  em_rota: "border-t-primary bg-primary/10",
+  aguardando_conferencia: "border-t-accent-foreground/40 bg-accent/60",
+  concluido: "border-t-chart-2 bg-chart-2/10",
+  nao_entregue: "border-t-destructive bg-destructive/10",
+  cancelado: "border-t-muted-foreground/50 bg-muted/60",
+};
+
 export const PERIOD_LABEL: Record<DeliveryPeriod, string> = {
   manha: "Manhã",
   tarde_noite: "Tarde/Noite",
