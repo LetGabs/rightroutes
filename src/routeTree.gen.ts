@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedEntregasRouteImport } from './routes/_authenticated/entregas'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 
 const IndexRoute = IndexRouteImport.update({
@@ -28,6 +29,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedEntregasRoute = AuthenticatedEntregasRouteImport.update({
+  id: '/entregas',
+  path: '/entregas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   id: '/painel',
   path: '/painel',
@@ -37,11 +43,13 @@ const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/entregas': typeof AuthenticatedEntregasRoute
   '/painel': typeof AuthenticatedPainelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/entregas': typeof AuthenticatedEntregasRoute
   '/painel': typeof AuthenticatedPainelRoute
 }
 export interface FileRoutesById {
@@ -49,14 +57,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/entregas': typeof AuthenticatedEntregasRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/painel'
+  fullPaths: '/' | '/auth' | '/entregas' | '/painel'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/painel'
-  id: '__root__' | '/' | '/_authenticated' | '/auth' | '/_authenticated/painel'
+  to: '/' | '/auth' | '/entregas' | '/painel'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/entregas'
+    | '/_authenticated/painel'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -88,6 +103,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/entregas': {
+      id: '/_authenticated/entregas'
+      path: '/entregas'
+      fullPath: '/entregas'
+      preLoaderRoute: typeof AuthenticatedEntregasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/painel': {
       id: '/_authenticated/painel'
       path: '/painel'
@@ -99,10 +121,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedEntregasRoute: typeof AuthenticatedEntregasRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedEntregasRoute: AuthenticatedEntregasRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
 }
 
