@@ -14,16 +14,213 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      deliveries: {
+        Row: {
+          cliente: string
+          conferido_em: string | null
+          conferido_por: string | null
+          created_at: string
+          data_prevista: string
+          id: string
+          impresso_em: string | null
+          impresso_por: string | null
+          motivo_nao_entrega: string | null
+          motoboy_id: string | null
+          numero_pedido: string
+          numero_romaneio: string
+          observacoes: string | null
+          periodo: Database["public"]["Enums"]["delivery_period"]
+          status: Database["public"]["Enums"]["delivery_status"]
+          updated_at: string
+          vendedor_id: string
+        }
+        Insert: {
+          cliente: string
+          conferido_em?: string | null
+          conferido_por?: string | null
+          created_at?: string
+          data_prevista: string
+          id?: string
+          impresso_em?: string | null
+          impresso_por?: string | null
+          motivo_nao_entrega?: string | null
+          motoboy_id?: string | null
+          numero_pedido: string
+          numero_romaneio: string
+          observacoes?: string | null
+          periodo: Database["public"]["Enums"]["delivery_period"]
+          status?: Database["public"]["Enums"]["delivery_status"]
+          updated_at?: string
+          vendedor_id: string
+        }
+        Update: {
+          cliente?: string
+          conferido_em?: string | null
+          conferido_por?: string | null
+          created_at?: string
+          data_prevista?: string
+          id?: string
+          impresso_em?: string | null
+          impresso_por?: string | null
+          motivo_nao_entrega?: string | null
+          motoboy_id?: string | null
+          numero_pedido?: string
+          numero_romaneio?: string
+          observacoes?: string | null
+          periodo?: Database["public"]["Enums"]["delivery_period"]
+          status?: Database["public"]["Enums"]["delivery_status"]
+          updated_at?: string
+          vendedor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deliveries_motoboy_id_fkey"
+            columns: ["motoboy_id"]
+            isOneToOne: false
+            referencedRelation: "motoboys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delivery_history: {
+        Row: {
+          acao: string
+          created_at: string
+          delivery_id: string
+          id: string
+          observacao: string | null
+          status_anterior: Database["public"]["Enums"]["delivery_status"] | null
+          status_novo: Database["public"]["Enums"]["delivery_status"] | null
+          usuario_id: string | null
+          usuario_nome: string | null
+        }
+        Insert: {
+          acao: string
+          created_at?: string
+          delivery_id: string
+          id?: string
+          observacao?: string | null
+          status_anterior?:
+            | Database["public"]["Enums"]["delivery_status"]
+            | null
+          status_novo?: Database["public"]["Enums"]["delivery_status"] | null
+          usuario_id?: string | null
+          usuario_nome?: string | null
+        }
+        Update: {
+          acao?: string
+          created_at?: string
+          delivery_id?: string
+          id?: string
+          observacao?: string | null
+          status_anterior?:
+            | Database["public"]["Enums"]["delivery_status"]
+            | null
+          status_novo?: Database["public"]["Enums"]["delivery_status"] | null
+          usuario_id?: string | null
+          usuario_nome?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_history_delivery_id_fkey"
+            columns: ["delivery_id"]
+            isOneToOne: false
+            referencedRelation: "deliveries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      motoboys: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+          telefone: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          telefone?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          telefone?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          email: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          email?: string
+          id: string
+          nome?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "vendedor" | "logistica"
+      delivery_period: "manha" | "tarde_noite"
+      delivery_status:
+        | "aguardando_logistica"
+        | "impressao_romaneios"
+        | "pronto_saida"
+        | "em_rota"
+        | "aguardando_conferencia"
+        | "concluido"
+        | "nao_entregue"
+        | "cancelado"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +347,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["vendedor", "logistica"],
+      delivery_period: ["manha", "tarde_noite"],
+      delivery_status: [
+        "aguardando_logistica",
+        "impressao_romaneios",
+        "pronto_saida",
+        "em_rota",
+        "aguardando_conferencia",
+        "concluido",
+        "nao_entregue",
+        "cancelado",
+      ],
+    },
   },
 } as const
