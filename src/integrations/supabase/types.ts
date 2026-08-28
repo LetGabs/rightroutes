@@ -80,6 +80,13 @@ export type Database = {
             referencedRelation: "motoboys"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "deliveries_motoboy_id_fkey"
+            columns: ["motoboy_id"]
+            isOneToOne: false
+            referencedRelation: "motoboys_publico"
+            referencedColumns: ["id"]
+          },
         ]
       }
       delivery_history: {
@@ -198,7 +205,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      motoboys_publico: {
+        Row: {
+          ativo: boolean | null
+          id: string | null
+          nome: string | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          id?: string | null
+          nome?: string | null
+        }
+        Update: {
+          ativo?: boolean | null
+          id?: string | null
+          nome?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
