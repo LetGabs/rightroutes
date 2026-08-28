@@ -38,7 +38,7 @@ export const Route = createFileRoute("/_authenticated/kanban")({
 function Kanban() {
   const { isLogistica, loading } = useAuth();
   const { deliveries, motoboys, profiles } = useAppData();
-  const { moveStatus, assignMotoboy, printAndRegister } = useDeliveryActions();
+  const { moveStatus, assignMotoboy, confirmPrint } = useDeliveryActions();
   const [sel, setSel] = useState<string[]>([]);
   const [busca, setBusca] = useState("");
   const [detalhe, setDetalhe] = useState<Delivery | null>(null);
