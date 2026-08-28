@@ -151,6 +151,11 @@ function Kanban() {
                                   {d.observacoes}
                                 </p>
                               )}
+                              {d.impresso_em && (
+                                <p className="mt-1 text-[11px] font-medium text-chart-2">
+                                  Impressão confirmada em {formatDateTime(d.impresso_em)}
+                                </p>
+                              )}
                               {prazoEncerrado(d) && <PrazoBadge />}
                             </button>
                           </div>
