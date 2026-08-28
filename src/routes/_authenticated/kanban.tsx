@@ -18,6 +18,7 @@ import {
   STATUS_LABEL,
   STATUS_ORDER,
   formatDate,
+  formatDateTime,
   prazoEncerrado,
   type Delivery,
   type DeliveryStatus,
