@@ -32,7 +32,7 @@ type Props = {
 
 export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: Props) {
   const { isLogistica } = useAuth();
-  const { moveStatus, assignMotoboy, printAndRegister } = useDeliveryActions();
+  const { moveStatus, assignMotoboy, confirmPrint } = useDeliveryActions();
   const [motivo, setMotivo] = useState(NAO_ENTREGA_MOTIVOS[0]!);
   const [obs, setObs] = useState("");
 
@@ -113,8 +113,8 @@ export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: P
                 </SelectContent>
               </Select>
 
-              <Button variant="outline" onClick={() => printAndRegister.mutate({ deliveries: [delivery], motoboys })}>
-                Imprimir romaneio
+              <Button variant="outline" onClick={() => confirmPrint.mutate({ deliveries: [delivery] })}>
+                Confirmar impressão
               </Button>
             </div>
 

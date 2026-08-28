@@ -18,6 +18,7 @@ import {
   STATUS_LABEL,
   STATUS_ORDER,
   formatDate,
+  formatDateTime,
   prazoEncerrado,
   type Delivery,
   type DeliveryStatus,
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/kanban")({
 function Kanban() {
   const { isLogistica, loading } = useAuth();
   const { deliveries, motoboys, profiles } = useAppData();
-  const { moveStatus, assignMotoboy, printAndRegister } = useDeliveryActions();
+  const { moveStatus, assignMotoboy, confirmPrint } = useDeliveryActions();
   const [sel, setSel] = useState<string[]>([]);
   const [busca, setBusca] = useState("");
   const [detalhe, setDetalhe] = useState<Delivery | null>(null);
@@ -52,7 +53,8 @@ function Kanban() {
   }, [deliveries, busca]);
 
   const selecionadas = deliveries.filter((d) => sel.includes(d.id));
-  const paraImprimir = deliveries.filter((d) => d.status === "impressao_romaneios");
+  const paraImprimir = deliveries.filter((d) => d.status === "impressao_romaneios" && !d.impresso_em);
+  const selParaImprimir = selecionadas.filter((d) => d.status === "impressao_romaneios");
 
   if (loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
   if (!isLogistica) return <Navigate to="/painel" replace />;
@@ -70,7 +72,10 @@ function Kanban() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Painel de logística</h1>
-          <p className="text-sm text-muted-foreground">Organize as entregas por etapa do fluxo operacional.</p>
+          <p className="text-sm text-muted-foreground">
+            Organize as entregas por etapa do fluxo operacional. A impressão do romaneio é feita no Fórmula Certa; aqui
+            você apenas confirma que já foi impresso.
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Input
@@ -82,9 +87,10 @@ function Kanban() {
           <Button
             variant="outline"
             disabled={paraImprimir.length === 0}
-            onClick={() => printAndRegister.mutate({ deliveries: paraImprimir, motoboys })}
+            title="Marca como impressos todos os romaneios pendentes da etapa. A impressão é feita no Fórmula Certa."
+            onClick={() => confirmPrint.mutate({ deliveries: paraImprimir })}
           >
-            Imprimir todos ({paraImprimir.length})
+            Confirmar impressão de todos ({paraImprimir.length})
           </Button>
         </div>
       </header>
@@ -144,6 +150,11 @@ function Kanban() {
                               {temObs && (
                                 <p className="mt-1 line-clamp-2 rounded border-l-2 border-obs bg-obs/20 px-1.5 py-0.5 font-medium">
                                   {d.observacoes}
+                                </p>
+                              )}
+                              {d.impresso_em && (
+                                <p className="mt-1 text-[11px] font-medium text-chart-2">
+                                  Impressão confirmada em {formatDateTime(d.impresso_em)}
                                 </p>
                               )}
                               {prazoEncerrado(d) && <PrazoBadge />}
@@ -226,12 +237,14 @@ function Kanban() {
             </Select>
             <Button
               variant="outline"
+              disabled={selParaImprimir.length === 0}
+              title="Marca os romaneios selecionados como impressos. A impressão é feita no Fórmula Certa."
               onClick={() => {
-                printAndRegister.mutate({ deliveries: selecionadas, motoboys });
+                confirmPrint.mutate({ deliveries: selParaImprimir });
                 setSel([]);
               }}
             >
-              Imprimir romaneios selecionados
+              Confirmar impressão dos selecionados ({selParaImprimir.length})
             </Button>
             <Button variant="ghost" onClick={() => setSel([])}>Limpar seleção</Button>
           </div>
