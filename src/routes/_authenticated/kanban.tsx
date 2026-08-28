@@ -83,9 +83,10 @@ function Kanban() {
           <Button
             variant="outline"
             disabled={paraImprimir.length === 0}
-            onClick={() => printAndRegister.mutate({ deliveries: paraImprimir, motoboys })}
+            title="Marca como impressos todos os romaneios pendentes da etapa. A impressão é feita no Fórmula Certa."
+            onClick={() => confirmPrint.mutate({ deliveries: paraImprimir })}
           >
-            Imprimir todos ({paraImprimir.length})
+            Confirmar impressão de todos ({paraImprimir.length})
           </Button>
         </div>
       </header>
