@@ -228,12 +228,14 @@ function Kanban() {
             </Select>
             <Button
               variant="outline"
+              disabled={selParaImprimir.length === 0}
+              title="Marca os romaneios selecionados como impressos. A impressão é feita no Fórmula Certa."
               onClick={() => {
-                printAndRegister.mutate({ deliveries: selecionadas, motoboys });
+                confirmPrint.mutate({ deliveries: selParaImprimir });
                 setSel([]);
               }}
             >
-              Imprimir romaneios selecionados
+              Confirmar impressão dos selecionados ({selParaImprimir.length})
             </Button>
             <Button variant="ghost" onClick={() => setSel([])}>Limpar seleção</Button>
           </div>
