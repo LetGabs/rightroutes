@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedConferenciaRouteImport } from './routes/_authenticated/conferencia'
 import { Route as AuthenticatedEntregasRouteImport } from './routes/_authenticated/entregas'
 import { Route as AuthenticatedKanbanRouteImport } from './routes/_authenticated/kanban'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
@@ -30,6 +31,12 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedConferenciaRoute =
+  AuthenticatedConferenciaRouteImport.update({
+    id: '/conferencia',
+    path: '/conferencia',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedEntregasRoute = AuthenticatedEntregasRouteImport.update({
   id: '/entregas',
   path: '/entregas',
@@ -49,6 +56,7 @@ const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/conferencia': typeof AuthenticatedConferenciaRoute
   '/entregas': typeof AuthenticatedEntregasRoute
   '/kanban': typeof AuthenticatedKanbanRoute
   '/painel': typeof AuthenticatedPainelRoute
@@ -56,6 +64,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/conferencia': typeof AuthenticatedConferenciaRoute
   '/entregas': typeof AuthenticatedEntregasRoute
   '/kanban': typeof AuthenticatedKanbanRoute
   '/painel': typeof AuthenticatedPainelRoute
@@ -65,20 +74,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/conferencia': typeof AuthenticatedConferenciaRoute
   '/_authenticated/entregas': typeof AuthenticatedEntregasRoute
   '/_authenticated/kanban': typeof AuthenticatedKanbanRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/entregas' | '/kanban' | '/painel'
+  fullPaths:
+    '/' | '/auth' | '/conferencia' | '/entregas' | '/kanban' | '/painel'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/entregas' | '/kanban' | '/painel'
+  to: '/' | '/auth' | '/conferencia' | '/entregas' | '/kanban' | '/painel'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/conferencia'
     | '/_authenticated/entregas'
     | '/_authenticated/kanban'
     | '/_authenticated/painel'
@@ -113,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/conferencia': {
+      id: '/_authenticated/conferencia'
+      path: '/conferencia'
+      fullPath: '/conferencia'
+      preLoaderRoute: typeof AuthenticatedConferenciaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/entregas': {
       id: '/_authenticated/entregas'
       path: '/entregas'
@@ -138,12 +157,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedConferenciaRoute: typeof AuthenticatedConferenciaRoute
   AuthenticatedEntregasRoute: typeof AuthenticatedEntregasRoute
   AuthenticatedKanbanRoute: typeof AuthenticatedKanbanRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedConferenciaRoute: AuthenticatedConferenciaRoute,
   AuthenticatedEntregasRoute: AuthenticatedEntregasRoute,
   AuthenticatedKanbanRoute: AuthenticatedKanbanRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
