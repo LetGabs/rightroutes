@@ -14,6 +14,7 @@ import { useDeliveryActions } from "@/hooks/useDeliveryActions";
 import {
   ALL_STATUSES,
   PERIOD_WINDOW,
+  STATUS_COLUMN_CLASS,
   STATUS_LABEL,
   STATUS_ORDER,
   formatDate,
@@ -95,39 +96,62 @@ function Kanban() {
         </TabsList>
 
         <TabsContent value="kanban" className="pt-3">
-          <div className="flex gap-3 overflow-x-auto pb-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7">
             {STATUS_ORDER.map((status) => {
               const cards = lista.filter((d) => d.status === status);
               return (
-                <div key={status} className="w-72 shrink-0 rounded-lg border bg-muted/40">
-                  <div className="flex items-center justify-between border-b px-3 py-2">
-                    <p className="text-sm font-semibold">{STATUS_LABEL[status]}</p>
+                <div
+                  key={status}
+                  className={`flex max-h-[70vh] flex-col rounded-lg border border-t-4 ${STATUS_COLUMN_CLASS[status]}`}
+                >
+                  <div className="flex items-center justify-between gap-2 border-b px-3 py-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide">{STATUS_LABEL[status]}</p>
                     <span className="rounded bg-background px-1.5 text-xs text-muted-foreground">{cards.length}</span>
                   </div>
-                  <div className="space-y-2 p-2">
-                    {cards.map((d) => (
-                      <div key={d.id} className="rounded-md border bg-card p-2.5 text-sm">
-                        <div className="flex items-start gap-2">
-                          <Checkbox
-                            checked={sel.includes(d.id)}
-                            onCheckedChange={() => toggle(d.id)}
-                            aria-label={`Selecionar romaneio ${d.numero_romaneio}`}
-                          />
-                          <button className="min-w-0 flex-1 text-left" onClick={() => setDetalhe(d)}>
-                            <p className="font-semibold">Romaneio {d.numero_romaneio}</p>
-                            <p className="truncate">{d.cliente}</p>
-                            <p className="text-xs text-muted-foreground">
-                              Pedido {d.numero_pedido} · {formatDate(d.data_prevista)}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{PERIOD_WINDOW[d.periodo]}</p>
-                            <p className="text-xs text-muted-foreground">
-                              Motoboy: {motoboys.find((m) => m.id === d.motoboy_id)?.nome ?? "—"}
-                            </p>
-                            {prazoEncerrado(d) && <PrazoBadge />}
-                          </button>
+                  <div className="space-y-2 overflow-y-auto p-2">
+                    {cards.map((d) => {
+                      const temObs = !!d.observacoes?.trim();
+                      return (
+                        <div
+                          key={d.id}
+                          className={`rounded-md border p-2 text-xs ${
+                            temObs ? "border-obs/70 bg-obs/25" : "bg-card"
+                          }`}
+                        >
+                          <div className="flex items-start gap-2">
+                            <Checkbox
+                              className="mt-0.5"
+                              checked={sel.includes(d.id)}
+                              onCheckedChange={() => toggle(d.id)}
+                              aria-label={`Selecionar romaneio ${d.numero_romaneio}`}
+                            />
+                            <button className="min-w-0 flex-1 text-left" onClick={() => setDetalhe(d)}>
+                              <p className="text-sm font-semibold leading-tight">
+                                Romaneio {d.numero_romaneio}
+                                {temObs && (
+                                  <span className="ml-1.5 rounded bg-obs/60 px-1 text-[10px] font-bold uppercase text-foreground">
+                                    obs
+                                  </span>
+                                )}
+                              </p>
+                              <p className="truncate font-medium">{d.cliente}</p>
+                              <p className="text-muted-foreground">
+                                Pedido {d.numero_pedido} · {formatDate(d.data_prevista)} · {PERIOD_WINDOW[d.periodo]}
+                              </p>
+                              <p className="text-muted-foreground">
+                                Motoboy: {motoboys.find((m) => m.id === d.motoboy_id)?.nome ?? "—"}
+                              </p>
+                              {temObs && (
+                                <p className="mt-1 line-clamp-2 rounded border-l-2 border-obs bg-obs/20 px-1.5 py-0.5 font-medium">
+                                  {d.observacoes}
+                                </p>
+                              )}
+                              {prazoEncerrado(d) && <PrazoBadge />}
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     {cards.length === 0 && <p className="p-2 text-xs text-muted-foreground">Nenhuma entrega.</p>}
                   </div>
                 </div>
