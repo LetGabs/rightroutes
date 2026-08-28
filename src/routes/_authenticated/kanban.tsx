@@ -52,7 +52,8 @@ function Kanban() {
   }, [deliveries, busca]);
 
   const selecionadas = deliveries.filter((d) => sel.includes(d.id));
-  const paraImprimir = deliveries.filter((d) => d.status === "impressao_romaneios");
+  const paraImprimir = deliveries.filter((d) => d.status === "impressao_romaneios" && !d.impresso_em);
+  const selParaImprimir = selecionadas.filter((d) => d.status === "impressao_romaneios");
 
   if (loading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
   if (!isLogistica) return <Navigate to="/painel" replace />;
