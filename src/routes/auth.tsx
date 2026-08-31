@@ -55,22 +55,29 @@ function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
-      <div className="w-full max-w-md rounded-xl border bg-card p-6 shadow-sm">
-        <div className="mb-4 flex items-center justify-center">
-          <img
-            src="/roval%20fav.png"
-            alt="Roval logo"
-            className="h-16 w-16 rounded-xl object-cover shadow-sm ring-1 ring-border"
-          />
+    <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(180,31,31,0.12),_transparent_35%),linear-gradient(135deg,#fff5f5_0%,#f8fafc_35%,#f4f4f5_100%)] p-4">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-border/80 bg-card shadow-[0_20px_50px_rgba(88,12,12,0.08)]">
+        <div className="border-b bg-gradient-to-r from-primary/8 via-primary/3 to-transparent px-6 py-5">
+          <div className="flex items-center gap-3">
+            <img
+              src="/roval%20fav.png"
+              alt="Roval logo"
+              className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-border bg-white"
+            />
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">Roval</p>
+              <h1 className="text-lg font-semibold tracking-tight text-foreground">Sistema de entregas</h1>
+            </div>
+          </div>
         </div>
-        <h1 className="text-xl font-semibold tracking-tight">Sistema de Controle de Entregas</h1>
-        <p className="mb-5 text-sm text-muted-foreground">Farmácia de manipulação — acesso interno</p>
 
-        <Tabs defaultValue="entrar">
-          <TabsList className="w-full">
-            <TabsTrigger value="entrar" className="flex-1">Entrar</TabsTrigger>
-            <TabsTrigger value="criar" className="flex-1">Criar conta</TabsTrigger>
+        <div className="p-6">
+          <p className="mb-4 text-sm text-muted-foreground">Acesso interno · Farmácia de manipulação</p>
+
+          <Tabs defaultValue="entrar">
+          <TabsList className="w-full rounded-lg bg-muted p-1">
+            <TabsTrigger value="entrar" className="flex-1 rounded-md">Entrar</TabsTrigger>
+            <TabsTrigger value="criar" className="flex-1 rounded-md">Criar conta</TabsTrigger>
           </TabsList>
 
           <TabsContent value="entrar">
@@ -108,6 +115,7 @@ function AuthPage() {
             </form>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </div>
   );

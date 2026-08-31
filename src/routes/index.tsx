@@ -27,21 +27,10 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user) void navigate({ to: "/painel", replace: true });
-  }, [loading, user, navigate]);
+    if (!loading) {
+      void navigate({ to: "/auth", replace: true });
+    }
+  }, [loading, navigate]);
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
-      <div className="max-w-xl text-center">
-        <h1 className="text-3xl font-semibold tracking-tight">Sistema de Controle de Entregas</h1>
-        <p className="mt-3 text-muted-foreground">
-          Cadastro pelo vendedor, painel de logística em kanban, impressão de romaneios, conferência em lote e
-          histórico completo de cada entrega.
-        </p>
-        <Button className="mt-6" onClick={() => navigate({ to: "/auth" })}>
-          Acessar o sistema
-        </Button>
-      </div>
-    </div>
-  );
+  return null;
 }
