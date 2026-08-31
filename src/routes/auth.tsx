@@ -57,6 +57,13 @@ function AuthPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <div className="w-full max-w-md rounded-xl border bg-card p-6 shadow-sm">
+        <div className="mb-4 flex items-center justify-center">
+          <img
+            src="/roval%20fav.png"
+            alt="Roval logo"
+            className="h-16 w-16 rounded-xl object-cover shadow-sm ring-1 ring-border"
+          />
+        </div>
         <h1 className="text-xl font-semibold tracking-tight">Sistema de Controle de Entregas</h1>
         <p className="mb-5 text-sm text-muted-foreground">Farmácia de manipulação — acesso interno</p>
 

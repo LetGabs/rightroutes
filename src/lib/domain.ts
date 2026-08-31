@@ -54,10 +54,10 @@ export const STATUS_CLASS: Record<DeliveryStatus, string> = {
   aguardando_logistica: "bg-muted text-muted-foreground border-border",
   impressao_romaneios: "bg-chart-3/15 text-chart-3 border-chart-3/40",
   pronto_saida: "bg-chart-5/15 text-chart-5 border-chart-5/40",
-  em_rota: "bg-primary/15 text-primary border-primary/40",
+  em_rota: "bg-amber-100 text-amber-700 border-amber-300",
   aguardando_conferencia: "bg-accent text-accent-foreground border-accent-foreground/30",
   concluido: "bg-chart-2/15 text-chart-2 border-chart-2/40",
-  nao_entregue: "bg-destructive/15 text-destructive border-destructive/40",
+  nao_entregue: "bg-red-100 text-red-700 border-red-300",
   cancelado: "bg-muted text-muted-foreground border-border line-through",
 };
 
@@ -66,10 +66,10 @@ export const STATUS_COLUMN_CLASS: Record<DeliveryStatus, string> = {
   aguardando_logistica: "border-t-muted-foreground/50 bg-muted/60",
   impressao_romaneios: "border-t-chart-3 bg-chart-3/10",
   pronto_saida: "border-t-chart-5 bg-chart-5/10",
-  em_rota: "border-t-primary bg-primary/10",
+  em_rota: "border-t-amber-400 bg-amber-50",
   aguardando_conferencia: "border-t-accent-foreground/40 bg-accent/60",
   concluido: "border-t-chart-2 bg-chart-2/10",
-  nao_entregue: "border-t-destructive bg-destructive/10",
+  nao_entregue: "border-t-red-500 bg-red-50",
   cancelado: "border-t-muted-foreground/50 bg-muted/60",
 };
 

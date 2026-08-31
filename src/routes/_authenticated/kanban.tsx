@@ -1,5 +1,6 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/kanban")({
 
 function Kanban() {
   const { isLogistica, loading } = useAuth();
-  const { deliveries, motoboys, profiles } = useAppData();
+  const { deliveries, motoboys, profiles, unidades } = useAppData();
   const { moveStatus, assignMotoboy, confirmPrint } = useDeliveryActions();
   const [sel, setSel] = useState<string[]>([]);
   const [busca, setBusca] = useState("");
@@ -117,6 +118,9 @@ function Kanban() {
                   <div className="space-y-2 overflow-y-auto p-2">
                     {cards.map((d) => {
                       const temObs = !!d.observacoes?.trim();
+                      const originName = unidades.find((u) => u.id === d.unidade_origem_id)?.nome ?? "";
+                      const destName = unidades.find((u) => u.id === d.unidade_destino_id)?.nome ?? "";
+
                       return (
                         <div
                           key={d.id}
@@ -124,6 +128,24 @@ function Kanban() {
                             temObs ? "border-obs/70 bg-obs/25" : "bg-card"
                           }`}
                         >
+                          {/* Transfer highlight: prominent badge + origin → destination (if available) */}
+                          {d.tipo_entrega === "transferencia" && (
+                            <div className="mb-2 flex items-center justify-between gap-2">
+                              <span className="inline-flex items-center gap-2 rounded-md bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground border border-primary">
+                                <Repeat className="size-3" />
+                                TRANSFERÊNCIA
+                              </span>
+                              {(originName || destName) && (
+                                <div
+                                  className="max-w-[40%] truncate text-xs font-medium text-muted-foreground"
+                                  title={originName || destName ? `${originName} → ${destName}` : undefined}
+                                >
+                                  {originName || "—"} {originName && destName ? '→' : ''} {destName || ''}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
                           <div className="flex items-start gap-2">
                             <Checkbox
                               className="mt-0.5"
