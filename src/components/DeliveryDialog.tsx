@@ -4,7 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { StatusBadge, PrazoBadge } from "@/components/StatusBadge";
+import { StatusBadge, PrazoBadge, TipoBadge } from "@/components/StatusBadge";
+import { useAppData } from "@/hooks/useAppData";
 import { useAuth } from "@/hooks/useAuth";
 import { useDeliveryActions } from "@/hooks/useDeliveryActions";
 import { fetchHistory } from "@/lib/api";
@@ -14,6 +15,7 @@ import {
   PERIOD_LABEL,
   PERIOD_WINDOW,
   STATUS_LABEL,
+  TIPO_LABEL,
   formatDate,
   formatDateTime,
   prazoEncerrado,
@@ -32,6 +34,7 @@ type Props = {
 
 export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: Props) {
   const { isLogistica } = useAuth();
+  const { unidades } = useAppData();
   const { moveStatus, assignMotoboy, confirmPrint } = useDeliveryActions();
   const [motivo, setMotivo] = useState(NAO_ENTREGA_MOTIVOS[0]!);
   const [obs, setObs] = useState("");
@@ -47,11 +50,19 @@ export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: P
   const conferente = profiles.find((p) => p.id === delivery.conferido_por)?.nome ?? "—";
   const impressor = profiles.find((p) => p.id === delivery.impresso_por)?.nome ?? "—";
   const motoboy = motoboys.find((m) => m.id === delivery.motoboy_id);
+  const nomeUnidade = (id: string | null) => unidades.find((u) => u.id === id)?.nome ?? "—";
+  const isTransfer = delivery.tipo_entrega === "transferencia";
 
   const info: [string, string][] = [
+    ["Tipo de entrega", TIPO_LABEL[delivery.tipo_entrega]],
     ["Nº do romaneio", delivery.numero_romaneio],
     ["Nº do pedido", delivery.numero_pedido],
     ["Cliente", delivery.cliente],
+    ...(isTransfer
+      ? ([["Unidade de origem", nomeUnidade(delivery.unidade_origem_id)], ["Unidade de destino", nomeUnidade(delivery.unidade_destino_id)]] as [string, string][])
+      : []),
+    ["Nº de fórmulas", String(delivery.numero_formulas ?? 1)],
+    ["Revenda", delivery.tem_revenda ? `Sim — ${delivery.quantidade_revenda ?? 0} unidade(s)` : "Não"],
     ["Data prevista", formatDate(delivery.data_prevista)],
     ["Período", `${PERIOD_LABEL[delivery.periodo]} — ${PERIOD_WINDOW[delivery.periodo]}`],
     ["Vendedor responsável", vendedor],
@@ -68,6 +79,7 @@ export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: P
         <DialogHeader>
           <DialogTitle className="flex flex-wrap items-center gap-2">
             Romaneio {delivery.numero_romaneio}
+            <TipoBadge tipo={delivery.tipo_entrega} />
             <StatusBadge status={delivery.status} />
             {prazoEncerrado(delivery) && <PrazoBadge />}
           </DialogTitle>
