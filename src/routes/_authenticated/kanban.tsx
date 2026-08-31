@@ -128,21 +128,27 @@ function Kanban() {
                             temObs ? "border-obs/70 bg-obs/25" : "bg-card"
                           }`}
                         >
-                          {/* Transfer highlight: prominent badge + origin → destination (if available) */}
+                          {/* Transfer highlight: explicit origin and destination */}
                           {d.tipo_entrega === "transferencia" && (
-                            <div className="mb-2 flex items-center justify-between gap-2">
-                              <span className="inline-flex items-center gap-2 rounded-md bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground border border-primary">
+                            <div className="mb-2 rounded-md border border-primary/30 bg-primary/5 p-2">
+                              <div className="mb-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-primary">
                                 <Repeat className="size-3" />
-                                TRANSFERÊNCIA
-                              </span>
-                              {(originName || destName) && (
-                                <div
-                                  className="max-w-[40%] truncate text-xs font-medium text-muted-foreground"
-                                  title={originName || destName ? `${originName} → ${destName}` : undefined}
-                                >
-                                  {originName || "—"} {originName && destName ? '→' : ''} {destName || ''}
+                                Transferência
+                              </div>
+                              <div className="space-y-1 text-[11px]">
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="font-medium text-muted-foreground">De</span>
+                                  <span className="max-w-[70%] truncate text-right font-semibold text-foreground" title={originName || "—"}>
+                                    {originName || "—"}
+                                  </span>
                                 </div>
-                              )}
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="font-medium text-muted-foreground">Para</span>
+                                  <span className="max-w-[70%] truncate text-right font-semibold text-foreground" title={destName || "—"}>
+                                    {destName || "—"}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                           )}
 
