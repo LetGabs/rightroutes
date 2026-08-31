@@ -10,6 +10,23 @@ export type DeliveryStatus =
 
 export type DeliveryPeriod = "manha" | "tarde_noite";
 
+export type DeliveryType = "domicilio" | "transferencia";
+
+export const TIPO_LABEL: Record<DeliveryType, string> = {
+  domicilio: "Entrega a domicílio",
+  transferencia: "Transferência entre lojas",
+};
+
+export const TIPO_SHORT: Record<DeliveryType, string> = {
+  domicilio: "Domicílio",
+  transferencia: "Transferência",
+};
+
+export const TIPO_CLASS: Record<DeliveryType, string> = {
+  domicilio: "bg-muted text-muted-foreground border-border",
+  transferencia: "bg-primary/15 text-primary border-primary/40",
+};
+
 export const STATUS_ORDER: DeliveryStatus[] = [
   "aguardando_logistica",
   "impressao_romaneios",
@@ -85,6 +102,12 @@ export type Delivery = {
   numero_pedido: string;
   numero_romaneio: string;
   cliente: string;
+  tipo_entrega: DeliveryType;
+  unidade_origem_id: string | null;
+  unidade_destino_id: string | null;
+  numero_formulas: number;
+  tem_revenda: boolean;
+  quantidade_revenda: number | null;
   data_prevista: string;
   periodo: DeliveryPeriod;
   status: DeliveryStatus;
@@ -108,6 +131,8 @@ export type Motoboy = {
 };
 
 export type Profile = { id: string; nome: string; email: string; ativo: boolean; created_at: string };
+
+export type Unidade = { id: string; nome: string; ativo: boolean };
 
 export type HistoryEntry = {
   id: string;

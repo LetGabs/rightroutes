@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, Package, Kanban, ClipboardCheck, Bike, BarChart3, Users, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Package, Kanban, ClipboardCheck, Bike, BarChart3, Users, Store, LogOut, Menu } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ const NAV = [
   { to: "/kanban", label: "Painel de logística", icon: Kanban, logisticaOnly: true },
   { to: "/conferencia", label: "Conferência", icon: ClipboardCheck, logisticaOnly: true },
   { to: "/motoboys", label: "Motoboys", icon: Bike, logisticaOnly: true },
+  { to: "/unidades", label: "Unidades / Lojas", icon: Store, logisticaOnly: true },
   { to: "/relatorios", label: "Relatórios", icon: BarChart3, logisticaOnly: true },
   { to: "/usuarios", label: "Usuários", icon: Users, logisticaOnly: true },
 ] as const;

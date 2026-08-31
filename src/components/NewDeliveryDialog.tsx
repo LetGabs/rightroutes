@@ -7,14 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAppData } from "@/hooks/useAppData";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { logHistory } from "@/lib/api";
-import { PERIOD_LABEL, PERIOD_WINDOW, todayISO, type DeliveryPeriod } from "@/lib/domain";
+import { PERIOD_LABEL, PERIOD_WINDOW, TIPO_LABEL, todayISO, type DeliveryPeriod, type DeliveryType } from "@/lib/domain";
 import { Plus } from "lucide-react";
 
 export function NewDeliveryDialog() {
   const { user, nome } = useAuth();
+  const { unidades } = useAppData();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [pedido, setPedido] = useState("");
@@ -22,7 +24,15 @@ export function NewDeliveryDialog() {
   const [cliente, setCliente] = useState("");
   const [data, setData] = useState(todayISO());
   const [periodo, setPeriodo] = useState<DeliveryPeriod>("manha");
+  const [tipo, setTipo] = useState<DeliveryType>("domicilio");
+  const [origem, setOrigem] = useState("");
+  const [destino, setDestino] = useState("");
+  const [formulas, setFormulas] = useState("1");
+  const [temRevenda, setTemRevenda] = useState<"sim" | "nao">("nao");
+  const [qtdRevenda, setQtdRevenda] = useState("");
   const [observacoes, setObservacoes] = useState("");
+
+  const unidadesAtivas = unidades.filter((u) => u.ativo);
 
   const reset = () => {
     setPedido("");
@@ -30,12 +40,19 @@ export function NewDeliveryDialog() {
     setCliente("");
     setData(todayISO());
     setPeriodo("manha");
+    setTipo("domicilio");
+    setOrigem("");
+    setDestino("");
+    setFormulas("1");
+    setTemRevenda("nao");
+    setQtdRevenda("");
     setObservacoes("");
   };
 
   const create = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Sessão expirada.");
+      const isTransfer = tipo === "transferencia";
       const { data: created, error } = await supabase
         .from("deliveries")
         .insert({
@@ -46,6 +63,12 @@ export function NewDeliveryDialog() {
           periodo,
           observacoes: observacoes.trim() || null,
           vendedor_id: user.id,
+          tipo_entrega: tipo,
+          unidade_origem_id: isTransfer ? origem : null,
+          unidade_destino_id: isTransfer ? destino : null,
+          numero_formulas: Math.max(1, parseInt(formulas, 10) || 1),
+          tem_revenda: temRevenda === "sim",
+          quantidade_revenda: temRevenda === "sim" ? parseInt(qtdRevenda, 10) || 0 : null,
         } as never)
         .select("id")
         .single();
@@ -53,7 +76,7 @@ export function NewDeliveryDialog() {
       await logHistory({ id: user.id, nome }, [
         {
           delivery_id: (created as { id: string }).id,
-          acao: "Entrega cadastrada",
+          acao: `Entrega cadastrada (${TIPO_LABEL[tipo]})`,
           status_novo: "aguardando_logistica",
         },
       ]);
@@ -67,14 +90,21 @@ export function NewDeliveryDialog() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const valid = pedido.trim() && romaneio.trim() && cliente.trim() && data;
+  const valid =
+    pedido.trim() &&
+    romaneio.trim() &&
+    cliente.trim() &&
+    data &&
+    parseInt(formulas, 10) >= 1 &&
+    (tipo === "domicilio" || (origem && destino && origem !== destino)) &&
+    (temRevenda === "nao" || parseInt(qtdRevenda, 10) >= 1);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button><Plus className="size-4" /> Nova Entrega</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Nova entrega</DialogTitle>
         </DialogHeader>
@@ -85,6 +115,17 @@ export function NewDeliveryDialog() {
             if (valid) create.mutate();
           }}
         >
+          <div className="space-y-1.5">
+            <Label>Tipo de entrega *</Label>
+            <Select value={tipo} onValueChange={(v) => setTipo(v as DeliveryType)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="domicilio">Entrega a domicílio</SelectItem>
+                <SelectItem value="transferencia">Transferência entre lojas</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="romaneio">Nº do romaneio *</Label>
@@ -95,10 +136,42 @@ export function NewDeliveryDialog() {
               <Input id="pedido" value={pedido} onChange={(e) => setPedido(e.target.value)} required />
             </div>
           </div>
+
+          {tipo === "transferencia" && (
+            <div className="grid gap-3 rounded-md border border-primary/30 bg-primary/5 p-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Unidade de origem *</Label>
+                <Select value={origem} onValueChange={setOrigem}>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    {unidadesAtivas.map((u) => (
+                      <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Unidade de destino *</Label>
+                <Select value={destino} onValueChange={setDestino}>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    {unidadesAtivas.map((u) => (
+                      <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {origem && destino && origem === destino && (
+                <p className="text-xs text-destructive sm:col-span-2">Origem e destino devem ser unidades diferentes.</p>
+              )}
+            </div>
+          )}
+
           <div className="space-y-1.5">
             <Label htmlFor="cliente">Nome do cliente *</Label>
             <Input id="cliente" value={cliente} onChange={(e) => setCliente(e.target.value)} required />
           </div>
+
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="data">Data prevista *</Label>
@@ -118,6 +191,49 @@ export function NewDeliveryDialog() {
               </p>
             </div>
           </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="formulas">Nº de fórmulas *</Label>
+              <Input
+                id="formulas"
+                type="number"
+                min={1}
+                value={formulas}
+                onChange={(e) => setFormulas(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Tem revenda? *</Label>
+              <Select value={temRevenda} onValueChange={(v) => setTemRevenda(v as "sim" | "nao")}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="nao">Não</SelectItem>
+                  <SelectItem value="sim">Sim</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {temRevenda === "sim" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="qtdRevenda">Quantidade de revenda *</Label>
+              <Input
+                id="qtdRevenda"
+                type="number"
+                min={1}
+                value={qtdRevenda}
+                onChange={(e) => setQtdRevenda(e.target.value)}
+                required
+              />
+            </div>
+          )}
+
+          <p className="text-xs text-muted-foreground">
+            Fórmulas e revenda são apenas contagens de volume do romaneio — não identificam medicamentos ou produtos.
+          </p>
+
           <div className="space-y-1.5">
             <Label htmlFor="obs">Observações</Label>
             <Textarea id="obs" rows={3} value={observacoes} onChange={(e) => setObservacoes(e.target.value)} />

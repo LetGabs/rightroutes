@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { Delivery, DeliveryStatus, HistoryEntry, Motoboy, Profile } from "./domain";
+import type { Delivery, DeliveryStatus, HistoryEntry, Motoboy, Profile, Unidade } from "./domain";
 
 
 export type HistoryInput = {
@@ -24,6 +24,12 @@ export async function fetchMotoboys(): Promise<Motoboy[]> {
   const { data, error } = await supabase.from("motoboys").select("*").order("nome");
   if (error) throw error;
   return (data ?? []) as unknown as Motoboy[];
+}
+
+export async function fetchUnidades(): Promise<Unidade[]> {
+  const { data, error } = await supabase.from("unidades").select("*").order("nome");
+  if (error) throw error;
+  return (data ?? []) as unknown as Unidade[];
 }
 
 export async function fetchProfiles(): Promise<Profile[]> {

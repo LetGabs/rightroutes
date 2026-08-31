@@ -26,11 +26,17 @@ export type Database = {
           impresso_por: string | null
           motivo_nao_entrega: string | null
           motoboy_id: string | null
+          numero_formulas: number
           numero_pedido: string
           numero_romaneio: string
           observacoes: string | null
           periodo: Database["public"]["Enums"]["delivery_period"]
+          quantidade_revenda: number | null
           status: Database["public"]["Enums"]["delivery_status"]
+          tem_revenda: boolean
+          tipo_entrega: Database["public"]["Enums"]["delivery_type"]
+          unidade_destino_id: string | null
+          unidade_origem_id: string | null
           updated_at: string
           vendedor_id: string
         }
@@ -45,11 +51,17 @@ export type Database = {
           impresso_por?: string | null
           motivo_nao_entrega?: string | null
           motoboy_id?: string | null
+          numero_formulas?: number
           numero_pedido: string
           numero_romaneio: string
           observacoes?: string | null
           periodo: Database["public"]["Enums"]["delivery_period"]
+          quantidade_revenda?: number | null
           status?: Database["public"]["Enums"]["delivery_status"]
+          tem_revenda?: boolean
+          tipo_entrega?: Database["public"]["Enums"]["delivery_type"]
+          unidade_destino_id?: string | null
+          unidade_origem_id?: string | null
           updated_at?: string
           vendedor_id: string
         }
@@ -64,11 +76,17 @@ export type Database = {
           impresso_por?: string | null
           motivo_nao_entrega?: string | null
           motoboy_id?: string | null
+          numero_formulas?: number
           numero_pedido?: string
           numero_romaneio?: string
           observacoes?: string | null
           periodo?: Database["public"]["Enums"]["delivery_period"]
+          quantidade_revenda?: number | null
           status?: Database["public"]["Enums"]["delivery_status"]
+          tem_revenda?: boolean
+          tipo_entrega?: Database["public"]["Enums"]["delivery_type"]
+          unidade_destino_id?: string | null
+          unidade_origem_id?: string | null
           updated_at?: string
           vendedor_id?: string
         }
@@ -85,6 +103,20 @@ export type Database = {
             columns: ["motoboy_id"]
             isOneToOne: false
             referencedRelation: "motoboys_publico"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deliveries_unidade_destino_id_fkey"
+            columns: ["unidade_destino_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deliveries_unidade_origem_id_fkey"
+            columns: ["unidade_origem_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
             referencedColumns: ["id"]
           },
         ]
@@ -185,6 +217,27 @@ export type Database = {
         }
         Relationships: []
       }
+      unidades: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -245,6 +298,7 @@ export type Database = {
         | "concluido"
         | "nao_entregue"
         | "cancelado"
+      delivery_type: "domicilio" | "transferencia"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -384,6 +438,7 @@ export const Constants = {
         "nao_entregue",
         "cancelado",
       ],
+      delivery_type: ["domicilio", "transferencia"],
     },
   },
 } as const
