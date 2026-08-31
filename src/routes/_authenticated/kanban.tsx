@@ -135,19 +135,14 @@ function Kanban() {
                                 <Repeat className="size-3" />
                                 Transferência
                               </div>
-                              <div className="space-y-1 text-[11px]">
-                                <div className="flex items-center justify-between gap-2">
-                                  <span className="font-medium text-muted-foreground">De</span>
-                                  <span className="max-w-[70%] truncate text-right font-semibold text-foreground" title={originName || "—"}>
-                                    {originName || "—"}
-                                  </span>
-                                </div>
-                                <div className="flex items-center justify-between gap-2">
-                                  <span className="font-medium text-muted-foreground">Para</span>
-                                  <span className="max-w-[70%] truncate text-right font-semibold text-foreground" title={destName || "—"}>
-                                    {destName || "—"}
-                                  </span>
-                                </div>
+                              <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-foreground">
+                                <span className="max-w-[40%] truncate text-left" title={originName || "—"}>
+                                  {originName || "ORIGEM"}
+                                </span>
+                                <span className="text-primary">→</span>
+                                <span className="max-w-[40%] truncate text-right" title={destName || "—"}>
+                                  {destName || "DESTINO"}
+                                </span>
                               </div>
                             </div>
                           )}
