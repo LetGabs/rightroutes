@@ -39,6 +39,10 @@ export const STATUS_ORDER: DeliveryStatus[] = [
 
 export const ALL_STATUSES: DeliveryStatus[] = [...STATUS_ORDER, "cancelado"];
 
+export const KANBAN_STATUSES: DeliveryStatus[] = ALL_STATUSES.filter(
+  (status) => status !== "concluido" && status !== "nao_entregue",
+);
+
 export const STATUS_LABEL: Record<DeliveryStatus, string> = {
   aguardando_logistica: "Aguardando logística",
   impressao_romaneios: "Impressão de romaneios",

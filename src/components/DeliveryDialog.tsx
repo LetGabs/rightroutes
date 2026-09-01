@@ -29,10 +29,11 @@ type Props = {
   delivery: Delivery | null;
   motoboys: Motoboy[];
   profiles: Profile[];
+  allowFinalStatuses?: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: Props) {
+export function DeliveryDialog({ delivery, motoboys, profiles, allowFinalStatuses = false, onOpenChange }: Props) {
   const { isLogistica } = useAuth();
   const { unidades } = useAppData();
   const { moveStatus, assignMotoboy, confirmPrint } = useDeliveryActions();
@@ -52,6 +53,10 @@ export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: P
   const motoboy = motoboys.find((m) => m.id === delivery.motoboy_id);
   const nomeUnidade = (id: string | null) => unidades.find((u) => u.id === id)?.nome ?? "—";
   const isTransfer = delivery.tipo_entrega === "transferencia";
+
+  const statusOptions = allowFinalStatuses
+    ? ALL_STATUSES
+    : ALL_STATUSES.filter((status) => status !== "concluido" && status !== "nao_entregue");
 
   const info: [string, string][] = [
     ["Tipo de entrega", TIPO_LABEL[delivery.tipo_entrega]],
@@ -104,7 +109,7 @@ export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: P
               >
                 <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {ALL_STATUSES.map((s) => (
+                  {statusOptions.map((s) => (
                     <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>
                   ))}
                 </SelectContent>
@@ -125,47 +130,53 @@ export function DeliveryDialog({ delivery, motoboys, profiles, onOpenChange }: P
                 </SelectContent>
               </Select>
 
-              <Button variant="outline" onClick={() => confirmPrint.mutate({ deliveries: [delivery] })}>
-                Confirmar impressão
+              <Button
+                variant="outline"
+                disabled={!!delivery.impresso_em}
+                onClick={() => confirmPrint.mutate({ deliveries: [delivery] })}
+              >
+                {delivery.impresso_em ? "Impressão confirmada" : "Confirmar impressão"}
               </Button>
             </div>
 
-            <div className="grid gap-2 sm:grid-cols-2">
-              <Button onClick={() => moveStatus.mutate({ deliveries: [delivery], status: "concluido" })}>
-                ✅ Entregue (concluir)
-              </Button>
-              <div className="space-y-2 rounded-md border bg-background p-2">
-                <p className="text-xs font-medium">❌ Não entregue — informe o motivo</p>
-                <Select value={motivo} onValueChange={setMotivo}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {NAO_ENTREGA_MOTIVOS.map((m) => (
-                      <SelectItem key={m} value={m}>{m}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  value={obs}
-                  onChange={(e) => setObs(e.target.value)}
-                  placeholder="Observação adicional (opcional)"
-                  rows={2}
-                />
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="w-full"
-                  onClick={() =>
-                    moveStatus.mutate({
-                      deliveries: [delivery],
-                      status: "nao_entregue",
-                      observacao: obs ? `${motivo} — ${obs}` : motivo,
-                    })
-                  }
-                >
-                  Marcar como não entregue
+            {allowFinalStatuses && (
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Button onClick={() => moveStatus.mutate({ deliveries: [delivery], status: "concluido" })}>
+                  ✅ Entregue (concluir)
                 </Button>
+                <div className="space-y-2 rounded-md border bg-background p-2">
+                  <p className="text-xs font-medium">❌ Não entregue — informe o motivo</p>
+                  <Select value={motivo} onValueChange={setMotivo}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {NAO_ENTREGA_MOTIVOS.map((m) => (
+                        <SelectItem key={m} value={m}>{m}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Textarea
+                    value={obs}
+                    onChange={(e) => setObs(e.target.value)}
+                    placeholder="Observação adicional (opcional)"
+                    rows={2}
+                  />
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="w-full"
+                    onClick={() =>
+                      moveStatus.mutate({
+                        deliveries: [delivery],
+                        status: "nao_entregue",
+                        observacao: obs ? `${motivo} — ${obs}` : motivo,
+                      })
+                    }
+                  >
+                    Marcar como não entregue
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

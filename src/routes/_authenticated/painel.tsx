@@ -56,8 +56,8 @@ function Painel() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Acompanhamento das entregas da farmácia</p>
+          <h1 className="text-2xl font-semibold tracking-tight">Entregas de hoje</h1>
+          <p className="text-sm text-muted-foreground">Visão operacional do dia: entregas em andamento, prazos e status da logística.</p>
         </div>
         <NewDeliveryDialog />
       </header>

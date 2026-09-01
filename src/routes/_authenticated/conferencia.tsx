@@ -120,6 +120,7 @@ function Conferencia() {
         delivery={detalhe}
         motoboys={motoboys}
         profiles={profiles}
+        allowFinalStatuses={true}
         onOpenChange={(o) => !o && setDetalhe(null)}
       />
     </div>

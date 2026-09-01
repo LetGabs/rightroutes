@@ -5,7 +5,7 @@ import { logHistory, updateDeliveries } from "@/lib/api";
 import { STATUS_LABEL, type Delivery, type DeliveryStatus, type Motoboy } from "@/lib/domain";
 
 export function useDeliveryActions() {
-  const { user, nome } = useAuth();
+  const { user, nome, isLogistica } = useAuth();
   const queryClient = useQueryClient();
   const actor = { id: user?.id ?? "", nome };
 
@@ -24,9 +24,14 @@ export function useDeliveryActions() {
       status: DeliveryStatus;
       observacao?: string;
     }) => {
+      const finalStatus = status === "concluido" || status === "nao_entregue";
+      if (finalStatus && !isLogistica) {
+        throw new Error("Apenas a logística pode fechar esta entrega.");
+      }
+
       const ids = deliveries.map((d) => d.id);
       const patch: Record<string, unknown> = { status };
-      if (status === "concluido" || status === "nao_entregue") {
+      if (finalStatus) {
         patch["conferido_em"] = new Date().toISOString();
         patch["conferido_por"] = actor.id;
       }
@@ -81,14 +86,32 @@ export function useDeliveryActions() {
   /** Marca romaneios como impressos no Fórmula Certa. Não gera documento nem muda o status. */
   const confirmPrint = useMutation({
     mutationFn: async ({ deliveries }: { deliveries: Delivery[] }) => {
+      const jaConfirmados = deliveries.filter((d) => !!d.impresso_em);
+      const pendentes = deliveries.filter((d) => !d.impresso_em);
+
+      if (jaConfirmados.length > 0 && pendentes.length === 0) {
+        toast.error("Romaneio já impresso", {
+          description: "Este romaneio já foi confirmado como impresso.",
+        });
+        return;
+      }
+
+      if (jaConfirmados.length > 0 && pendentes.length > 0) {
+        toast.warning("Alguns romaneios já estavam impressos", {
+          description: `${jaConfirmados.length} item(ns) foram ignorados por já estarem confirmados.`,
+        });
+      }
+
+      if (pendentes.length === 0) return;
+
       const now = new Date().toISOString();
       await updateDeliveries(
-        deliveries.map((d) => d.id),
+        pendentes.map((d) => d.id),
         { impresso_em: now, impresso_por: actor.id },
       );
       await logHistory(
         actor,
-        deliveries.map((d) => ({
+        pendentes.map((d) => ({
           delivery_id: d.id,
           acao: "Impressão do romaneio confirmada (Fórmula Certa)",
           status_anterior: d.status,
@@ -97,8 +120,11 @@ export function useDeliveryActions() {
       );
     },
     onSuccess: (_d, vars) => {
+      const pendentes = vars.deliveries.filter((d) => !d.impresso_em);
       refresh();
-      toast.success(`${vars.deliveries.length} romaneio(s) marcados como impressos`);
+      if (pendentes.length > 0) {
+        toast.success(`${pendentes.length} romaneio(s) marcados como impressos`);
+      }
     },
     onError: (e: Error) => toast.error(e.message),
   });
