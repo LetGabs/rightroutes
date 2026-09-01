@@ -172,7 +172,7 @@ function Kanban() {
         </TabsList>
 
         <TabsContent value="kanban" className="pt-3">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
             {STATUS_ORDER.map((status) => {
               const cards = [...lista.filter((d) => d.status === status)].sort(
                 (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
@@ -180,7 +180,7 @@ function Kanban() {
               return (
                 <div
                   key={status}
-                  className={`flex max-h-[70vh] flex-col rounded-lg border border-t-4 ${STATUS_COLUMN_CLASS[status]}`}
+                  className={`flex min-w-0 max-h-[70vh] flex-col rounded-lg border border-t-4 ${STATUS_COLUMN_CLASS[status]}`}
                 >
                   <div className="flex items-center justify-between gap-2 border-b px-3 py-2">
                     <div className="flex items-center gap-2">
@@ -194,7 +194,7 @@ function Kanban() {
                     </div>
                     <span className="rounded bg-background px-1.5 text-xs text-muted-foreground">{cards.length}</span>
                   </div>
-                  <div className="space-y-2 overflow-y-auto p-2">
+                  <div className="space-y-2 overflow-y-auto p-2.5">
                     {cards.map((d) => {
                       const temObs = !!d.observacoes?.trim();
                       const originName = unidades.find((u) => u.id === d.unidade_origem_id)?.nome ?? "";
