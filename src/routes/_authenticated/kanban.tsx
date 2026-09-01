@@ -172,7 +172,7 @@ function Kanban() {
         </TabsList>
 
         <TabsContent value="kanban" className="pt-3">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5">
             {STATUS_ORDER.map((status) => {
               const cards = [...lista.filter((d) => d.status === status)].sort(
                 (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
